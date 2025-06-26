@@ -58,6 +58,10 @@ class Configuration:
         return None
 
     @property
+    def courses(self) -> list:
+        return self._courses.values()
+
+    @property
     def numberOfCourses(self) -> int:
         return len(self._courses)
 

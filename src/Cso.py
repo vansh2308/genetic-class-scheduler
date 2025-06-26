@@ -1,4 +1,3 @@
-
 from .LévyFlights import LévyFlights
 from .NsgaIII import NsgaIII
 import math
@@ -22,6 +21,7 @@ class Cso(NsgaIII):
 
         self._lf, self._gBest = None, None
         self._current_position = [[]]
+        self._best_history = []
 
 
     def initialize(self, population):
@@ -127,6 +127,7 @@ class Cso(NsgaIII):
 
             cur, next = next, cur
             currentGeneration += 1
+            self._best_history.append(self.result.fitness)
 
     def __str__(self):
         return "Cuckoo Search Optimization (CSO)"

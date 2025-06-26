@@ -1,7 +1,7 @@
-
 from model.Constant import Constant
 from model.Reservation import Reservation
 from collections import defaultdict
+import random
 
 
 class HtmlOutput:
@@ -22,19 +22,29 @@ class HtmlOutput:
     WEEK_DAYS = ("MON", "TUE", "WED", "THU", "FRI")
 
     @staticmethod
-    def getCourseClass(cc, criterias, ci):
+    def get_random_color(course_name):
+        # Generate a color from a hash of the course name for consistency
+        random.seed(course_name)
+        r = random.randint(200, 255)
+        g = random.randint(200, 255)
+        b = random.randint(200, 255)
+        return f"rgb({r},{g},{b})"
+
+    @staticmethod
+    def getCourseClass(cc, criterias, ci, course_colors):
         COLOR1 = HtmlOutput.COLOR1
         COLOR2 = HtmlOutput.COLOR2
         CRITERIAS = HtmlOutput.CRITERIAS
         length_CRITERIAS = len(CRITERIAS)
 
-        sb = [cc.Course.Name, "<br />", cc.Professor.Name, "<br />", "/".join(map(lambda grp: grp.Name, cc.Groups)),
-                  "<br />"]
+        sb = [f"<div style='background-color:{course_colors[cc.Course.Name]}; padding: 10px; border-radius: 5px; color: black;'>"]
+        sb.extend(["<b>", cc.Course.Name, "</b>", "<br />", cc.Professor.Name, "<br />", "/".join(map(lambda grp: grp.Name, cc.Groups)),
+                  "<br />"])
         if cc.LabRequired:
             sb.append("Lab<br />")
 
         for i in range(length_CRITERIAS):
-            sb.append("<span style='color:")
+            sb.append("<span style=''")
             if criterias[ci + i]:
                 sb.append(COLOR1)
                 sb.append("' title='")
@@ -47,10 +57,12 @@ class HtmlOutput:
             sb.append(CRITERIAS[i])
             sb.append(" </span>")
 
+        sb.append("</div>")
+
         return sb
 
     @staticmethod
-    def generateTimeTable(solution, slot_table):
+    def generateTimeTable(solution, slot_table, course_colors):
         ci = 0
 
         time_table = defaultdict(list)
@@ -88,7 +100,7 @@ class HtmlOutput:
                 room_schedule = ROOM_COLUMN_NUMBER * [None]
                 time_table[key] = room_schedule
 
-            room_schedule[dayId] = "".join(getCourseClass(cc, solution.criteria, ci))
+            room_schedule[dayId] = "".join(getCourseClass(cc, solution.criteria, ci, course_colors))
             ci += len(HtmlOutput.CRITERIAS)
 
         return time_table
@@ -103,11 +115,11 @@ class HtmlOutput:
 
         sb = []
         if rowspan > 1:
-            sb.append("<td style='border: .1em solid black; padding: .25em' rowspan='")
+            sb.append("<td style='padding: .25em; vertical-align: top;' rowspan='")
             sb.append(rowspan)
             sb.append("'>")
         else:
-            sb.append("<td style='border: .1em solid black; padding: .25em'>")
+            sb.append("<td style='border: .1em solid; padding: .25em; vertical-align: top;'>")
 
         sb.append(content)
         sb.append("</td>")
@@ -119,20 +131,23 @@ class HtmlOutput:
         nr = configuration.numberOfRooms
         getRoomById = configuration.getRoomById
 
+        # Generate colors for courses
+        course_colors = {course.Name: HtmlOutput.get_random_color(course.Name) for course in configuration.courses}
+
         slot_table = defaultdict(list)
-        time_table = HtmlOutput.generateTimeTable(solution, slot_table)  # Tuple[0] = time, Tuple[1] = roomId
+        time_table = HtmlOutput.generateTimeTable(solution, slot_table, course_colors)  # Tuple[0] = time, Tuple[1] = roomId
         if not slot_table or not time_table:
             return ""
 
-        sb = []
+        sb = ["<style> table, th, td { color: white; font-family: 'Montserrat', sans-serif; font-size: 12px; border-top: 1px solid #262730; border-bottom: 1px solid #262730; min-height: max-content } </style>"]
         for roomId in range(nr):
             room = getRoomById(roomId)
             for periodId in range(HtmlOutput.ROOM_ROW_NUMBER):
                 if periodId == 0:
                     sb.append("<div id='room_")
                     sb.append(room.Name)
-                    sb.append("' style='padding: 0.5em'>\n")
-                    sb.append("<table style='border-collapse: collapse; width: 95%'>\n")
+                    sb.append("' style='padding: 1.5em'>\n")
+                    sb.append("<table style='border-collapse: collapse; width: 95%; background-color: transparent; '>\n")
                     sb.append(HtmlOutput.getTableHeader(room))
                 else:
                     key = (periodId, roomId)
@@ -141,7 +156,7 @@ class HtmlOutput:
                     sb.append("<tr>")
                     for dayId in range(HtmlOutput.ROOM_COLUMN_NUMBER):
                         if dayId == 0:
-                            sb.append("<th style='border: .1em solid black; padding: .25em' scope='row' colspan='2'>")
+                            sb.append("<th style='border: 0.1em solid #262730; margin: 5px 0; background-color: transparent; color: #6c757d; padding: 10px 0' scope='row' colspan='2';'>")
                             sb.append(HtmlOutput.PERIODS[periodId])
                             sb.append("</th>\n")
                             continue
@@ -160,17 +175,17 @@ class HtmlOutput:
 
     @staticmethod
     def getTableHeader(room):
-        sb = ["<tr><th style='border: .1em solid black' scope='col' colspan='2'>Room: ", room.Name, "</th>\n"]
+        sb = ["<tr><th style='border: 1px solid transparent; padding-top: 17px; background-color: #6c757d30;' scope='col' colspan='2'>Room: ", room.Name, "</th>\n"]
         for weekDay in HtmlOutput.WEEK_DAYS:
-            sb.append("<th style='border: .1em solid black; padding: .25em; width: 15%' scope='col' rowspan='2'>")
+            sb.append("<th style='border: .1em solid transparent; background-color: #6c757d30; padding: 10px; width: 15%' scope='col' rowspan='2'>")
             sb.append(weekDay)
             sb.append("</th>\n")
         sb.append("</tr>\n")
         sb.append("<tr>\n")
-        sb.append("<th style='border: .1em solid black; padding: .25em'>Lab: ")
+        sb.append("<th style='border: .1em solid transparent; background-color: #6c757d30; padding: 10px'>Lab: ")
         sb.append("Yes" if room.Lab else "No")
         sb.append("</th>\n")
-        sb.append("<th style='border: .1em solid black; padding: .25em'>Seats: ")
+        sb.append("<th style='border: .1em solid transparent; background-color: #6c757d30; padding: 10px'>Seats: ")
         sb.append(room.NumberOfSeats)
         sb.append("</th>\n")
         sb.append("</tr>\n")
