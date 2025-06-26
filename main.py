@@ -1,4 +1,3 @@
-
 import codecs
 import subprocess
 import pathlib
@@ -11,16 +10,20 @@ import traceback
 from model.Configuration import Configuration
 from src.Cso import Cso
 from src.HTMLOutput import HtmlOutput
+from src.SimulatedAnnealing import SimulatedAnnealing
 
 
-def main(file_name):
+def main(file_name, alg_name="cso"):
     start_time = int(round(time.time() * 1000))
 
     configuration = Configuration()
     target_file = str(pathlib.Path().absolute()) + file_name
     configuration.parseFile(target_file)
 
-    alg = Cso(configuration)
+    if alg_name == "sa":
+        alg = SimulatedAnnealing(configuration)
+    else:
+        alg = Cso(configuration)
 
     print("\n\nMaking a Class Schedule Using", alg, ".\n")
     alg.run()
@@ -41,13 +44,18 @@ def main(file_name):
 if __name__ == "__main__":
     # file_name = "/GaSchedule.json"
     file_name = "/Input.json"
+    alg_name = "cso"
     if len(sys.argv) > 1:
-        file_name = sys.argv[1]
+        if sys.argv[1] in ["cso", "sa"]:
+            alg_name = sys.argv[1]
+        else:
+            file_name = sys.argv[1]
+    
+    if len(sys.argv) > 2:
+        alg_name = sys.argv[2]
+
 
     try:
-        main(file_name)
+        main(file_name, alg_name)
     except:
         traceback.print_exc()
-
-
-loda
