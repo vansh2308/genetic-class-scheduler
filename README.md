@@ -2,11 +2,14 @@
 
 This project is a class scheduler based on genetic algorithms, specifically the NSGA-II (Non-dominated Sorting Genetic Algorithm II). It aims to solve the complex problem of creating optimal university class schedules by considering various constraints and objectives.
 
+<img src="./static/hero.png" width="100%" />
+
 ## Features
 
-- **Multi-objective Optimization**: Uses NSGA-II to handle multiple, often conflicting, objectives such as minimizing professor conflicts, respecting room capacities, and accommodating student group preferences.
+- **Genetic Inspired Constraint Satisfaction**: Provides implementation of (1) **Non-Dominated Genetic Search Algorithm (NSGAII) with Cuckoo Search Optimization** & (2) **Simulated Annealing**
+- **Multi-objective Optimization**: Uses Genetic Algorithms to handle multiple, often conflicting, objectives such as minimizing professor conflicts, respecting room capacities, and accommodating student group preferences.
 - **JSON Configuration**: Class schedules, professor details, room information, and other constraints are defined in a flexible `Input.json` file.
-- **HTML Output**: Generates a clear and easy-to-read HTML representation of the final, optimized schedule.
+- **Intriguing UI**: Generates a clear and easy-to-read Streamlit UI of the final, optimized schedule.
 - **Extensible**: The modular design allows for the addition of new constraints and objectives.
 
 ## How to Run
@@ -15,21 +18,17 @@ This project is a class scheduler based on genetic algorithms, specifically the 
 
 2.  **Install Dependencies**:
     ```bash
+    python3 -m venv venv
+    source venv/bin/activate
     pip install -r requirements.txt
     ```
 
 3.  **Run the Scheduler**:
     ```bash
-    python main.py
+    streamlit run app.py
     ```
     This will use the default `Input.json` file.
 
-4.  **Custom Input**: You can also provide a path to your own JSON input file as a command-line argument:
-    ```bash
-    python main.py /path/to/your/input.json
-    ```
-
-5.  **View the Output**: The script will automatically open the generated HTML schedule in your default web browser.
 
 ## Input File Format
 
