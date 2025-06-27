@@ -1,6 +1,6 @@
-# Genetic Scheduler (NSGA-II)
+# SmartSchedule
 
-This project is a class scheduler based on genetic algorithms, specifically the NSGA-II (Non-dominated Sorting Genetic Algorithm II). It aims to solve the complex problem of creating optimal university class schedules by considering various constraints and objectives.
+This project is a class scheduler based on genetic algorithms, specifically the NSGA-II (Non-dominated Sorting Genetic Algorithm II) with Cuckoo Search Optimization & Simulated Annealing. It aims to solve the complex problem of creating optimal university class schedules by considering various constraints and objectives.
 
 <img src="./static/hero.png" width="100%" />
 
