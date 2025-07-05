@@ -40,3 +40,9 @@ The `Input.json` file contains an array of objects, each representing a professo
 -   **`group`**: Defines a student group with an `id`, `name`, and `size`.
 -   **`class`**: Defines a class to be scheduled, linking a `professor`, `course`, and `groups`. It also specifies the `duration` and whether it's a `lab` session.
 
+## Author
+- Github - [vansh2308](https://github.com/vansh2308)
+- Website - [Vansh Agarwal](https://portfolio-website-self-xi.vercel.app/)
+
+
+
